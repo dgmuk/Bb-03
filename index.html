@@ -1,1 +1,274 @@
-1
+<!DOCTYPE html>
+<html lang="ru" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест уровня социальной поддержки</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        /* Исправление для Google Sites */
+        html, body {
+            height: auto !important;
+            min-height: 1px !important;
+            overflow: visible !important; 
+        }
+
+        /* Анимация для плавного появления блоков */
+        .fade-in-item {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Стилизация радио-кнопок */
+        .form-radio {
+            display: none;
+        }
+        .form-radio + span {
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            border: 2px solid #4b5563; /* gray-600 */
+            display: block;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+        }
+        .form-radio:hover + span {
+            border-color: #6b7280; /* gray-500 */
+            background-color: #374151; /* gray-700 */
+        }
+        .form-radio:checked + span {
+            border-color: #3b82f6; /* blue-500 */
+            background-color: #1e3a8a; /* blue-900 */
+            color: white;
+            font-weight: 600;
+        }
+        
+        /* Анимация мерцания для кнопок */
+        .shimmer-btn {
+            position: relative;
+            overflow: hidden;
+        }
+        .shimmer-btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(100deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0) 100%);
+            transform: translateX(-150%);
+            animation: shimmer 3s infinite;
+        }
+        @keyframes shimmer {
+            0% { transform: translateX(-150%); }
+            50% { transform: translateX(250%); }
+            100% { transform: translateX(250%); }
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-200">
+
+    <div id="main-container" class="container mx-auto max-w-3xl p-4 sm:p-8">
+        
+        <!-- Заголовок -->
+        <header class="text-center mb-10 fade-in-item">
+            <h1 class="text-3xl sm:text-4xl font-black text-white leading-tight">
+                Тест: Уровень социальной поддержки
+            </h1>
+        </header>
+        
+        <!-- Вступительный блок -->
+        <div class="bg-gray-800 rounded-2xl p-6 mb-10 fade-in-item text-gray-400 space-y-3" style="animation-delay: 100ms;">
+            <p>Социальная поддержка помогает вашей деятельности и позитивно влияет на принятие решений. Люди с хорошей поддержкой могут достигать большего даже в неблагоприятных условиях.</p>
+            <p class="font-semibold text-gray-300">Помните: кто вы сегодня и кем станете в будущем, зависит от того, с кем вы выбрали проводить свое время.</p>
+            <p>Ответьте на вопросы максимально честно, чтобы определить уровень вашей социальной поддержки.</p>
+        </div>
+
+        <!-- Форма с вопросами -->
+        <form id="testForm" class="space-y-8">
+            
+            <!-- Вопросы 1-12 -->
+            <script>
+                const questions = [
+                    "Люди, с которыми Вы общаетесь (на работе, дома или в других местах), имеют здоровые привычки, такие как регулярные занятия спортом, следят за тем, что они едят, принимают добавки?",
+                    "Ваш супруг(-а) или партнер придерживается привычек здорового образа жизни, такие как регулярные занятия спортом, контроль за едой и прием добавок?",
+                    "Когда Вы захотите потренироваться (например, пойти в тренажерный зал или на пробежку) Вам легко будет найти тренировочного партнера?",
+                    "Ваши коллеги приносят на работу сладости (печенье, торты, пирожные и т.д.)?",
+                    "Если Вы едите вне дома более одного раза в неделю, люди, с которыми вы едите, выбирают здоровую еду?",
+                    "Вы принадлежите к какому-либо клубу, группе или команде, которая встречается минимум 2 раза в неделю и делает физические упражнения? (это не включает членство в фитнес-клубе)",
+                    "Вы состоите в какой-либо группе и принимаете регулярное (в среднем 3 раза в неделю) участие в тренировочном процессе (в том числе групповые программы в фитнес-клубах)?",
+                    "Когда Вы обсуждаете свои цели, связанные с питанием и тренировками, Ваши друзья проявляют желание присоединиться или они говорят, что Вы сошли с ума (или что-то подобное)?",
+                    "Люди, с которыми Вы живете, приносят домой еду, которую Вы считаете не подходящей для Ваших целей?",
+                    "Люди, с которыми Вы живете, приносят домой еду, которую Вы считаете подходящей для Ваших целей?",
+                    "Люди, с которыми Вы живете или работаете, вмешиваются в Ваш график, что мешает посещать запланированные тренировки?",
+                    "Те, с кем Вы общаетесь, делятся с Вами новой информацией касательно питания, упражнений или добавок?"
+                ];
+                const options = [
+                    [{ text: "А) Да, большинство из них", value: 3 }, { text: "Б) Примерно половина - да, а половина - нет", value: 0 }, { text: "В) Нет, большинство из них - нет", value: -3 }],
+                    [{ text: "А) Да, мой/моя супруг(-а) придерживается", value: 5 }, { text: "Б) Нет, мой/моя супруг(-а) не придерживается", value: -5 }, { text: "В) У меня нет супруга(-и)", value: 0 }],
+                    [{ text: "А) Да, легко", value: 3 }, { text: "Б) Нет, я не знаю такого человека", value: 0 }, { text: "В) Нет, вокруг меня не много активных людей", value: -3 }],
+                    [{ text: "А) Да, они часто это делают", value: -4 }, { text: "Б) Да, но не часто", value: 0 }, { text: "В) Нет, они этого не делают", value: 4 }],
+                    [{ text: "А) Да, всегда", value: 2 }, { text: "Б) Иногда (50/50)", value: 0 }, { text: "В) Нет, никогда", value: -2 }],
+                    [{ text: "А) Я был членом такого клуба несколько лет", value: 5 }, { text: "Б) Я стал членом такого клуба недавно", value: 2 }, { text: "В) Нет", value: 0 }],
+                    [{ text: "А) Да, я участвую уже как минимум 1 год", value: 2 }, { text: "Б) Да, я только присоединился", value: 1 }, { text: "В) Нет, не участвую", value: 0 }],
+                    [{ text: "А) Да, они интересуются", value: 2 }, { text: "Б) Нет, они не интересуются", value: 0 }, { text: "В) Они считают, что я \"сумасшедший\"", value: -2 }],
+                    [{ text: "А) Всегда", value: -5 }, { text: "Б) Иногда", value: -3 }, { text: "В) Никогда", value: 0 }],
+                    [{ text: "А) Всегда", value: 5 }, { text: "Б) Иногда", value: 0 }, { text: "В) Никогда", value: -5 }],
+                    [{ text: "А) Всегда; они не уважают мое время", value: -3 }, { text: "Б) Иногда; они не думают об этом", value: -1 }, { text: "В) Никогда; они уважают мой выбор", value: 3 }],
+                    [{ text: "А) Всегда", value: 5 }, { text: "Б) Иногда", value: 2 }, { text: "В) Никогда", value: 0 }]
+                ];
+
+                questions.forEach((q, i) => {
+                    let optionsHTML = '';
+                    options[i].forEach((opt, j) => {
+                        optionsHTML += `
+                            <label>
+                                <input type="radio" name="q${i+1}" value="${opt.value}" class="form-radio">
+                                <span class="option-label">${opt.text}</span>
+                            </label>
+                        `;
+                    });
+                    document.write(`
+                        <div class="bg-gray-800 rounded-2xl shadow-lg p-6 fade-in-item" style="animation-delay: ${200 + i * 100}ms;">
+                            <p class="font-semibold text-lg text-white mb-4">${i+1}. ${q}</p>
+                            <div class="space-y-3">${optionsHTML}</div>
+                        </div>
+                    `);
+                });
+            </script>
+
+            <div class="pt-4 fade-in-item" style="animation-delay: 1400ms;">
+                <button type="button" id="calculateBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 shimmer-btn">
+                    <span>Получить результат</span>
+                </button>
+            </div>
+        </form>
+        
+        <div id="result-container" class="hidden mt-10"></div>
+        <div id="alert-message" class="hidden mt-4 bg-red-900/50 border border-red-500/30 text-red-300 p-4 rounded-lg text-center"></div>
+
+        <!-- Подвал -->
+        <footer class="text-center mt-12 border-t border-gray-700 pt-6">
+            <p class="text-sm text-gray-500">&copy; 2025 г. Все права защищены. Специально для проекта Body balance.</p>
+        </footer>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const container = document.getElementById('main-container');
+            const calculateBtn = document.getElementById('calculateBtn');
+            const resultContainer = document.getElementById('result-container');
+            const alertMessage = document.getElementById('alert-message');
+
+            calculateBtn.addEventListener('click', () => {
+                let totalScore = 0;
+                const totalQuestions = 12;
+                let allAnswered = true;
+
+                for (let i = 1; i <= totalQuestions; i++) {
+                    const selectedOption = document.querySelector(`input[name="q${i}"]:checked`);
+                    if (!selectedOption) {
+                        allAnswered = false;
+                        break;
+                    }
+                    totalScore += parseInt(selectedOption.value);
+                }
+
+                if (!allAnswered) {
+                    alertMessage.textContent = "Пожалуйста, ответьте на все вопросы перед получением результата.";
+                    alertMessage.classList.remove('hidden');
+                    resultContainer.classList.add('hidden');
+                    return;
+                }
+                
+                alertMessage.classList.add('hidden');
+                
+                let resultText = "";
+                let resultClass = "";
+                let resultTitle = "";
+
+                if (totalScore >= 20) {
+                    resultClass = "border-green-500 bg-green-900/30 text-green-300";
+                    resultTitle = "Отличная поддержка";
+                    resultText = "Это не все, что Вам нужно для успеха, но это хорошее начало. Будьте уверены, что делаете все, чтобы поддерживать отношения с окружающими Вас людьми. Социальная поддержка работает в обоих направлениях.";
+                } else if (totalScore >= 5) {
+                    resultClass = "border-yellow-500 bg-yellow-900/30 text-yellow-300";
+                    resultTitle = "Средняя поддержка";
+                    resultText = "Вы имеете некоторую социальную поддержку, но очевидно, что некоторые сферы Вашей деятельности имеют трудности. Постарайтесь найти пути улучшения социальной среды вокруг Вас.";
+                } else if (totalScore >= -14) {
+                    resultClass = "border-orange-500 bg-orange-900/30 text-orange-300";
+                    resultTitle = "Недостаточная поддержка";
+                    resultText = "Ваша окружающая среда не способствует достижению целей. Ваш первый шаг – выяснить в какой области у Вас проблемы и постараться решить их. Вместо обвинений, придумайте креативный способ, как можно включить окружающих в свою систему поддержки.";
+                } else {
+                    resultClass = "border-red-500 bg-red-900/30 text-red-300";
+                    resultTitle = "Крайне низкая поддержка";
+                    resultText = "Эта оценка является сигналом к реальным проблемам. Лучшим решением будет серьезно поговорить с Вашими друзьями и семьей о тех вещах, которые для Вас важны. Возможно, придется сменить свое окружение, помня, что это одно из важнейших составляющих успеха.";
+                }
+
+                resultContainer.innerHTML = `
+                    <div class="border-2 ${resultClass} rounded-2xl p-6 fade-in-item text-center">
+                        <h3 class="font-bold text-2xl text-white mb-2">${resultTitle}</h3>
+                        <p class="text-4xl font-black text-white my-4">${totalScore} баллов</p>
+                        <p class="text-base">${resultText}</p>
+                        <button type="button" id="copyResultBtn" class="mt-6 bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-6 rounded-lg transition duration-300 shimmer-btn">
+                            Скопировать результат для тренера
+                        </button>
+                    </div>
+                `;
+                resultContainer.classList.remove('hidden');
+                
+                const copyResultBtn = document.getElementById('copyResultBtn');
+                if (copyResultBtn) {
+                    copyResultBtn.addEventListener('click', () => {
+                        const resultToCopy = `Тест: Уровень социальной поддержки\nРезультат: ${resultTitle} (${totalScore} баллов)\n---\n${resultText.trim()}`;
+
+                        const tempTextarea = document.createElement('textarea');
+                        tempTextarea.value = resultToCopy;
+                        document.body.appendChild(tempTextarea);
+                        tempTextarea.select();
+                        try {
+                            document.execCommand('copy');
+                            copyResultBtn.textContent = '✅ Скопировано!';
+                        } catch (err) {
+                            copyResultBtn.textContent = 'Ошибка!';
+                            console.error('Ошибка копирования: ', err);
+                        }
+                        document.body.removeChild(tempTextarea);
+
+                        setTimeout(() => {
+                            copyResultBtn.textContent = 'Скопировать результат для тренера';
+                        }, 2500);
+                    });
+                }
+
+                resultContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+
+            // Google Sites height fix
+            if ('ResizeObserver' in window) {
+                const observer = new ResizeObserver(entries => {
+                    if (entries.length > 0) {
+                        const height = entries[0].target.scrollHeight;
+                        document.body.style.height = height + 'px';
+                        document.documentElement.style.height = height + 'px';
+                    }
+                });
+                if (container) observer.observe(container);
+            }
+        });
+    </script>
+</body>
+</html>
